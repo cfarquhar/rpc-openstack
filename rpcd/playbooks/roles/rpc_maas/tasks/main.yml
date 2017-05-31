@@ -45,13 +45,7 @@
 
 - include: remote.yml
   vars:
-# NOTE(cfarquhar): The following is a workaround for maas_target_alias not
-# being implemented in Mitaka's rpc_maas role.  We should be able to ignore
-# this change after moving to Newton as long as we keep maas_external_ip_address
-# defined for each control plane.  See https://github.com/CommBank/zbi.rpc/issues/447
-# for more info.
-#    ip_address: "{{ external_lb_vip_address }}"
-    ip_address: "{{ maas_external_ip_address }}"
+    ip_address: "{{ external_lb_vip_address }}"
   when: >
     remote_check == true
 
