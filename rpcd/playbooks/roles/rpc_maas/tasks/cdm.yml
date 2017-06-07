@@ -17,11 +17,20 @@
   vars:
     checks: "{{ cpu_memory_checks_list }}"
 
+# NOTE(cfarquhar): The following two tasks differ from upstream to work around
+# an ansible bug related to nested dicts.  I'll be surprise if the bug isn't
+# fixed in ansible 2.x, which we will conusume when we move to Newton.  We
+# should test for the problem described in https://github.com/CommBank/zbi.rpc/issues/420
+# when we move to Newton and then revert to upstream if maas_excluded_devices
+# works properly.  See the bug mentioned above for more details.
+
+- set_fact:
+    disk_util_devices: "[{% for device in ansible_devices.keys() %}{% if (device not in maas_excluded_devices|default([])) and (ansible_devices[device].model != 'VIRTUAL-DISK') %}'{{ device }}',{% endif %}{% endfor %}]"
 
 - include: ensure_local_checks.yml
   vars:
     checks: "{{ disk_utilisation_checks_list }}"
-    disk_util_devices: "[{% for device in ansible_devices.keys() %}{% if (device not in maas_excluded_devices|default([])) and (ansible_devices[device].model != 'VIRTUAL-DISK') %}'{{ device }}',{% endif %}{% endfor %}]"
+    disk_util_devices: "{{ disk_util_devices }}"
 
 - name: Gathering facts for mounted drives
   set_fact:
