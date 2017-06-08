@@ -25,12 +25,12 @@
 # works properly.  See the bug mentioned above for more details.
 
 - set_fact:
-    disk_util_devices: "[{% for device in ansible_devices.keys() %}{% if (device not in maas_excluded_devices|default([])) and (ansible_devices[device].model != 'VIRTUAL-DISK') %}'{{ device }}',{% endif %}{% endfor %}]"
+    disk_util_devices_fact: "[{% for device in ansible_devices.keys() %}{% if (device not in maas_excluded_devices|default([])) and (ansible_devices[device].model != 'VIRTUAL-DISK') %}'{{ device }}',{% endif %}{% endfor %}]"
 
 - include: ensure_local_checks.yml
   vars:
     checks: "{{ disk_utilisation_checks_list }}"
-    disk_util_devices: "{{ disk_util_devices }}"
+    disk_util_devices: "{{ disk_util_devices_fact }}"
 
 - name: Gathering facts for mounted drives
   set_fact:
